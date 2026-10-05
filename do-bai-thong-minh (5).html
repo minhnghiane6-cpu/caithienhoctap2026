@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cải thiện học tập</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#060b16">
+<link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--pn:#0d1627;--ln:#1b2b47;--tx:#dbe7ff;--mu:#8195b8;--ac:#38e1ff;--o:#fb923c;--r:#f87171}
+*{box-sizing:border-box}
+body{margin:0;color:var(--tx);font:16px/1.6 'Be Vietnam Pro',system-ui,sans-serif;padding-bottom:88px;
+ background:linear-gradient(rgba(56,225,255,.045) 1px,transparent 1px) 0 0/32px 32px,linear-gradient(90deg,rgba(56,225,255,.045) 1px,transparent 1px) 0 0/32px 32px,#060b16}
+main{max-width:760px;margin:auto;padding:max(18px,env(safe-area-inset-top)) 16px 16px}
+.page,.sub{display:none}.page.on,.sub.on{display:block}
+h1{margin:0;font-size:28px;font-weight:800;letter-spacing:-.01em}h2{font-size:20px;margin:4px 0 8px}h3{font-size:16px;margin:22px 0 0;color:var(--ac)}
+.hero{border-left:3px solid var(--ac);padding:4px 0 4px 14px;margin-bottom:6px}
+.hero small,.note,.item small{color:var(--mu)}.note{font-size:14px}
+#greet{font-weight:600;margin-top:10px}
+#clock{font:700 clamp(46px,14vw,88px)/1.05 'JetBrains Mono',monospace;color:var(--ac);text-shadow:0 0 28px rgba(56,225,255,.5)}
+.grid3{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-top:14px}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:14px;padding:14px;text-align:left;color:var(--tx);font-family:inherit;font-size:15px;cursor:pointer}
+.card:hover{border-color:var(--ac)}.card b{display:block;font-size:17px}.card span{color:var(--mu);font-size:14px}
+.pn{background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:12px;margin-top:10px}.pn.today{border-color:var(--ac)}
+label{display:block;font-weight:600;margin:12px 0 4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--ln);border-radius:8px;font:inherit;background:#0a1222;color:var(--tx)}
+textarea{min-height:130px;resize:vertical}
+button.b{background:var(--ac);color:#04121a;border:0;border-radius:8px;padding:10px 16px;font-weight:600;font-size:15px;font-family:inherit;cursor:pointer;margin:12px 8px 0 0}
+button.b.alt{background:transparent;color:var(--tx);border:1px solid var(--ln)}button.b.rec{background:var(--r);color:#fff}
+:focus-visible{outline:3px solid var(--o);outline-offset:2px}
+.item{background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:12px;margin-top:10px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.item>div:last-child{display:flex;gap:8px;align-items:center;flex-shrink:0}.item input{width:auto}
+.item button,.ent button{background:none;border:1px solid var(--ln);color:var(--tx);border-radius:6px;padding:4px 10px;cursor:pointer;font-family:inherit}
+.tm{font:700 26px 'JetBrains Mono',monospace;color:var(--ac)}.tm2{font-family:'JetBrains Mono',monospace;color:var(--ac)}
+.ent{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid var(--ln);margin-top:6px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chips label{margin:0;font-weight:400}.chips input{display:none}
+.chips span{display:block;padding:6px 12px;border:1px solid var(--ln);border-radius:20px;cursor:pointer;font-size:14px}
+.chips input:checked+span{background:var(--ac);color:#04121a;border-color:var(--ac)}
+.box{background:#0a1222;border:1px solid var(--ln);border-radius:10px;padding:14px;margin-top:12px;min-height:80px;white-space:pre-wrap}
+.hint{color:var(--o);font-weight:600;min-height:28px;margin-top:8px}.score{font-size:46px;font-weight:800;line-height:1.1;color:var(--ac)}
+.g{background:rgba(52,211,153,.2);border-radius:3px;padding:0 2px}.o{background:rgba(251,146,60,.25);border-radius:3px;padding:0 2px}.m{color:var(--r);text-decoration:underline;font-weight:600}
+.legend span{margin-right:14px;font-size:14px}
+details.hi{background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:10px 12px;margin-top:10px}details.hi summary{cursor:pointer}details.hi .box{margin-top:8px}
+.subnav,.mode-nav{display:flex;gap:6px;margin-bottom:8px}.subnav button,.mode-nav button{flex:1;background:transparent;border:1px solid var(--ln);color:var(--mu);border-radius:20px;padding:8px 0;font-family:inherit;font-size:14px;cursor:pointer}
+.subnav button.on,.mode-nav button.on{border-color:var(--ac);color:var(--ac)}
+#nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:rgba(6,11,22,.93);backdrop-filter:blur(10px);border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom);z-index:5}
+#nav button{flex:1;background:none;border:0;color:var(--mu);padding:8px 2px;font-size:11px;line-height:1.25;font-family:inherit;cursor:pointer}
+#nav button.on{color:var(--ac)}#nav i{display:block;font-style:normal;font-size:20px}
+#ring{position:fixed;inset:0;z-index:60;background:rgba(2,6,14,.95);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}#ring.on{display:flex}
+.mode{display:none}.mode.on{display:block}
+.tw{overflow-x:auto;margin-top:8px}table.sch{border-collapse:separate;border-spacing:4px;min-width:720px}
+table.sch th{font-size:13px;font-weight:600;color:var(--mu);text-align:center}table.sch th.today{color:var(--ac)}
+table.sch th.grp{text-align:left;color:var(--ac);padding-top:10px}
+table.sch th.p{text-align:left;white-space:nowrap;position:sticky;left:0;background:#060b16;padding-right:6px}
+table.sch select{padding:6px 2px;font-size:12px;min-width:84px}
+
+.ov{position:fixed;inset:0;z-index:20;background:rgba(2,6,14,.9);display:none;align-items:center;justify-content:center;padding:16px}.ov.on{display:flex}
+.ovb{background:var(--pn);border:1px solid var(--ln);border-radius:14px;padding:16px;width:100%;max-width:440px;max-height:88vh;overflow:auto}
+#pk{align-items:flex-start;padding-top:7vh}#auth{z-index:30}#dlg{z-index:40}
+#pkl{margin:10px 0;max-height:55vh;overflow:auto}
+.pki{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--ln);color:var(--tx);font:inherit;padding:11px 6px;cursor:pointer}
+.pki.on{color:var(--ac);font-weight:600}.pki:hover{background:#0a1222}
+button.sp{display:block;width:100%;text-align:left;padding:10px;border:1px solid var(--ln);border-radius:8px;font:inherit;background:#0a1222;color:var(--tx);cursor:pointer}
+button.sp::after{content:"\25BE";float:right;color:var(--mu)}
+button.cell{width:100%;min-width:84px;max-width:120px;padding:6px 4px;font:inherit;font-size:12px;border:1px solid var(--ln);border-radius:8px;background:#0a1222;color:var(--mu);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+button.cell.f{color:var(--tx);border-color:#2a4a7a}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#12213b;border:1px solid var(--ac);color:var(--tx);padding:10px 16px;border-radius:10px;z-index:70;max-width:90%;opacity:0;pointer-events:none;transition:opacity .2s;text-align:center}#toast.on{opacity:1}
+</style></head><body>
+<main>
+<section class="page on" id="p-home">
+ <div class="hero"><small>Phần mềm cải thiện học tập</small><h1>Cải thiện học tập</h1>
+  <div id="greet"></div><div id="clock">00:00:00</div><small id="date"></small></div>
+ <div class="grid3">
+  <button class="card" data-go="alarm"><b>Báo thức học tập</b><span id="hAl"></span></button>
+  <button class="card" data-go="tt"><b>Thời khóa biểu học tập</b><span id="hTt"></span></button>
+  <button class="card" data-go="study"><b>Dò bài</b><span id="hSt"></span></button>
+ </div>
+ <p class="note" style="margin-top:28px">Tác giả: Nguyễn Minh Nghĩa</p>
+</section>
+
+<section class="page" id="p-alarm"><h2>Báo thức học tập</h2>
+ <div class="pn"><label for="aT">Giờ</label><input type="time" id="aT" value="06:30">
+  <label for="aL">Nhãn (tùy chọn)</label><input id="aL" data-vi="Ví dụ: Ôn bài Toán" data-en="e.g. Review math">
+  <label>Lặp lại (bỏ trống = hằng ngày)</label><div class="chips" id="aD"></div>
+  <button class="b" id="aAdd">Thêm báo thức</button></div>
+ <div id="aList"></div>
+ <p class="note">Báo thức chỉ kêu khi ứng dụng đang mở. Hãy bật âm lượng.</p>
+</section>
+
+<section class="page" id="p-tt"><h2>Thời khóa biểu học tập</h2>
+ <div class="subnav"><button data-s="schp" class="on">Lịch đi học</button><button data-s="ownp">Lịch tự học</button></div>
+ <section class="sub on" id="schp">
+  <p class="note">Mỗi ngày có 10 tiết: 5 tiết sáng và 5 tiết chiều. Chọn môn cho từng tiết, thay đổi được lưu tự động.</p>
+  <div class="tw"><table class="sch" id="schT"></table></div>
+  <button class="b alt" id="schClr">Xóa lịch đi học</button>
+ </section>
+ <section class="sub" id="ownp">
+ <div class="pn"><label for="tD">Thứ</label><select id="tD"></select>
+  <label for="tS">Bắt đầu</label><input type="time" id="tS" value="07:00">
+  <label for="tE">Kết thúc</label><input type="time" id="tE" value="07:45">
+  <label for="tSub">Môn học</label><select id="tSub"></select>
+  <label for="tN">Ghi chú / phòng học</label><input id="tN">
+  <button class="b" id="tAdd">Thêm vào thời khóa biểu</button></div>
+ <div id="tList"></div>
+ </section>
+</section>
+
+<section class="page" id="p-study">
+ <div class="subnav"><button data-s="lib" class="on">Bài học</button><button data-s="rec">Trả bài</button><button data-s="his">Lịch sử</button></div>
+ <section class="sub on" id="lib">
+  <label for="sub">Môn học</label><select id="sub"></select>
+  <label for="ttl">Tiêu đề bài</label><input id="ttl">
+  <label for="body">Nội dung bài học (dán, đọc hoặc chụp ảnh)</label><textarea id="body"></textarea>
+  <button class="b alt" id="dict">Nhập bằng giọng nói</button><button class="b alt" id="scan">Chụp / chọn ảnh lấy chữ</button><input type="file" id="img" accept="image/*" hidden>
+  <div class="note" id="st" aria-live="polite"></div>
+  <button class="b" id="save">Lưu bài</button><button class="b alt" id="clear">Làm mới form</button>
+  <label for="fsub">Lọc danh sách theo môn</label><select id="fsub"></select>
+  <label for="lq">Tìm bài học</label><input id="lq" type="search" autocomplete="off" data-vi="Gõ tên bài, nội dung hoặc môn..." data-en="Search title, text or subject...">
+  <div id="list"></div>
+ </section>
+ <section class="sub" id="rec">
+  <label for="pick">Chọn bài cần trả</label><select id="pick"></select>
+  <label>Cách trả bài</label>
+  <div class="mode-nav"><button data-m="voice" class="on">Ghi âm</button><button data-m="photo">Chụp ảnh</button><button data-m="text">Văn bản</button></div>
+  <div class="mode on" id="m-voice">
+   <button class="b" id="mic">Bắt đầu đọc</button><button class="b alt" id="hintBtn">Gợi ý</button><button class="b alt" id="redo">Xóa và làm lại</button>
+   <div class="hint" id="hint" aria-live="polite"></div>
+   <div class="box" id="live">Bấm "Bắt đầu đọc" rồi đọc bài. Chữ sẽ hiện ở đây.</div>
+  </div>
+  <div class="mode" id="m-photo">
+   <button class="b" id="scanT">Chụp / chọn ảnh bài làm</button><input type="file" id="imgT" accept="image/*" hidden>
+   <textarea id="photoTxt" data-vi="Chữ đọc từ ảnh sẽ hiện ở đây. Bạn có thể sửa trước khi chấm." data-en="Text read from the photo appears here. You can edit it before grading."></textarea>
+   <button class="b" id="gradeP">Chấm điểm</button><button class="b alt" id="clrP">Xóa và chụp lại</button>
+   <div class="note" id="stT" aria-live="polite"></div>
+  </div>
+  <div class="mode" id="m-text">
+   <textarea id="typed" data-vi="Gõ bài làm của bạn ở đây." data-en="Type your answer here."></textarea>
+   <button class="b" id="gradeT">Chấm điểm</button><button class="b alt" id="clrT">Xóa và làm lại</button>
+  </div>
+  <div id="result"></div>
+ </section>
+ <section class="sub" id="his">
+  <label for="hsub">Xem lịch sử theo môn</label><select id="hsub"></select>
+  <p class="note" id="hsum"></p><div id="hlist"></div>
+  <button class="b alt" id="hclear">Xóa toàn bộ lịch sử</button>
+ </section>
+</section>
+
+<section class="page" id="p-set"><h2>Cài đặt</h2>
+ <div class="pn"><b>Tài khoản</b><div id="acInfo" class="note"></div>
+  <button class="b" id="acIn">Đăng nhập / Tạo tài khoản</button><button class="b alt" id="acOut">Đăng xuất</button>
+  <label for="bk">Sao lưu / Khôi phục</label><textarea id="bk" style="min-height:70px"></textarea>
+  <button class="b alt" id="bkOut">Sao lưu</button><button class="b alt" id="bkIn">Khôi phục</button></div>
+ <label for="lang">Ngôn ngữ</label><select id="lang"><option value="vi">Tiếng Việt</option><option value="en">English</option></select>
+ <label for="key">Khóa API Gemini (tùy chọn)</label><input id="key" type="password">
+ <label for="model">Tên model Gemini</label><input id="model" value="gemini-2.5-flash">
+ <button class="b" id="saveSet">Lưu cài đặt</button>
+ <p class="note">Không có khóa: chấm bằng so khớp từ trên máy. Có khóa: AI chấm thêm màu cam và đọc ảnh chính xác hơn. Khóa chỉ lưu trên máy bạn.</p>
+</section>
+</main>
+
+<nav id="nav">
+ <button data-p="home" class="on"><i>🏠</i>Trang chủ</button><button data-p="alarm"><i>⏰</i>Báo thức</button>
+ <button data-p="tt"><i>📅</i>Thời khóa biểu</button><button data-p="study"><i>🎙️</i>Dò bài</button><button data-p="set"><i>⚙️</i>Cài đặt</button>
+</nav>
+<div id="auth" class="ov"><div class="ovb">
+ <h2>Đăng nhập</h2>
+ <p class="note">Đăng nhập để bài học, lịch sử, báo thức và thời khóa biểu được ghi nhớ theo tài khoản của bạn trên thiết bị này.</p>
+ <label for="auU">Tên đăng nhập</label><input id="auU" autocomplete="username" autocapitalize="none" spellcheck="false">
+ <label for="auP">Mật khẩu</label><input id="auP" type="password" autocomplete="current-password">
+ <div class="hint" id="auE" aria-live="polite"></div>
+ <button class="b" id="auLogin">Đăng nhập</button><button class="b alt" id="auReg">Tạo tài khoản</button><br>
+ <button class="b alt" id="auGuest">Dùng không cần tài khoản</button><button class="b alt" id="auCancel" hidden>Hủy</button>
+</div></div>
+<div id="pk" class="ov"><div class="ovb"><input id="pkq" type="search" autocomplete="off" data-vi="Gõ để tìm..." data-en="Type to search..."><div id="pkl"></div><button class="b alt" id="pkx" style="margin-top:0">Đóng</button></div></div>
+<div id="dlg" class="ov"><div class="ovb"><p id="dlgT" style="margin-top:0"></p><button class="b" id="dlgOk">Đồng ý</button><button class="b alt" id="dlgNo">Hủy</button></div></div>
+<div id="toast" role="status"></div>
+<div id="ring" role="alertdialog"><div class="tm" id="ringT" style="font-size:60px"></div><h2 id="ringL"></h2><button class="b" id="ringOff">Tắt báo thức</button></div>
+<script>
+const $=id=>document.getElementById(id);
+const gstore={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:(JSON.parse(v)??d)}catch{return d}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch{if(!window.__wf){window.__wf=1;setTimeout(()=>toast('Không lưu được dữ liệu trên thiết bị này.'),0)}return false}}};
+let PFX='__none__';
+{const ss=gstore.get('session',null);if(ss)PFX=ss.u?'u_'+ss.u+'_':''}
+const store={get:(k,d)=>gstore.get(PFX+k,d),set:(k,v)=>gstore.set(PFX+k,v)};
+const USER_KEYS=['lessons','hist','alarms','tt','sch','key','model'];
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sq=x=>plain(x).replace(/\s+/g,' ').trim();
+const norm=w=>w.toLowerCase().replace(/[.,;:!?"“”'()\-–]/g,'');
+const plain=w=>norm(w).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
+let L=gstore.get('lang','vi');
+const D=Object.fromEntries(`Trang chủ=Home
+Báo thức=Alarm
+Thời khóa biểu=Timetable
+Dò bài=Study check
+Cài đặt=Settings
+Phần mềm cải thiện học tập=Learning improvement software
+Cải thiện học tập=Learning Improvement
+Báo thức học tập=Study alarms
+Thời khóa biểu học tập=Study timetable
+Tác giả: Nguyễn Minh Nghĩa=Author: Nguyễn Minh Nghĩa
+Chào buổi sáng=Good morning
+Chào buổi chiều=Good afternoon
+Chào buổi tối=Good evening
+Không còn tiết nào hôm nay.=No more classes today.
+Chưa có báo thức sắp tới hôm nay.=No upcoming alarm today.
+Chưa có lượt dò bài nào.=No checks yet.
+Chưa có lượt dò bài nào. Hãy trả bài một lần để lưu vào đây.=No checks yet. Recite once to save it here.
+lượt dò bài=checks
+trung bình=average
+Giờ=Time
+Nhãn (tùy chọn)=Label (optional)
+Lặp lại (bỏ trống = hằng ngày)=Repeat (empty = every day)
+Thêm báo thức=Add alarm
+Chưa có báo thức nào.=No alarms yet.
+Hằng ngày=Every day
+Đến giờ học!=Time to study!
+Tắt báo thức=Dismiss
+Báo thức chỉ kêu khi ứng dụng đang mở. Hãy bật âm lượng.=Alarms only ring while the app is open. Turn the volume up.
+Thứ=Day
+Bắt đầu=Start
+Kết thúc=End
+Môn học=Subject
+Ghi chú / phòng học=Note / room
+Thêm vào thời khóa biểu=Add to timetable
+hôm nay=today
+Giờ kết thúc phải sau giờ bắt đầu.=End time must be after start time.
+Bài học=Lessons
+Trả bài=Recite
+Lịch sử=History
+Tiêu đề bài=Lesson title
+Nội dung bài học (dán, đọc hoặc chụp ảnh)=Lesson text (paste, dictate or photo)
+Lưu bài=Save lesson
+Làm mới form=Clear form
+Nhập bằng giọng nói=Dictate by voice
+Chụp / chọn ảnh lấy chữ=Photo to text
+Lọc danh sách theo môn=Filter by subject
+Tất cả môn=All subjects
+Chọn bài cần trả=Choose a lesson
+Đọc bằng giọng nói=Recite by voice
+Bắt đầu đọc=Start reading
+Gợi ý=Hint
+Dừng và chấm điểm=Stop and grade
+Dừng nhập=Stop dictating
+Cập nhật bài=Update lesson
+Sửa=Edit
+Xóa=Delete
+Đang nghe...=Listening...
+Bấm "Bắt đầu đọc" rồi đọc bài. Chữ sẽ hiện ở đây.=Press "Start reading" and recite. Your words appear here.
+Gõ hoặc chụp ảnh bài làm để đối chiếu=Type or photograph your answer to compare
+Chụp / chọn ảnh bài làm=Photo of your answer
+Chấm văn bản=Grade text
+Chưa nghe thấy gì. Hãy thử lại.=Nothing heard. Try again.
+Đang chấm điểm...=Grading...
+Chính xác=Exact
+Đúng ý=Right meaning
+Thiếu / sai=Missing / wrong
+Xem lịch sử theo môn=View history by subject
+Xóa toàn bộ lịch sử=Clear all history
+Chưa có bài nào. Dán bài đầu tiên ở phía trên.=No lessons yet. Add your first one above.
+Đang nhận dạng chữ trong ảnh, vui lòng đợi...=Reading the photo, please wait...
+Xong. Hãy đọc lại và sửa lỗi chữ trước khi lưu.=Done. Review and fix typos before saving.
+Xong. Hãy kiểm tra và sửa lỗi chữ rồi bấm "Chấm điểm".=Done. Check the text, fix typos, then press "Grade".
+Không nhận dạng được. Hãy thử ảnh rõ nét, đủ sáng, chụp thẳng trang sách.=Could not read it. Try a sharp, well-lit photo taken straight on.
+Đang nghe, hãy đọc nội dung bài...=Listening, read the lesson aloud...
+Đã dừng. Hãy đọc lại và sửa lỗi trước khi lưu.=Stopped. Review and fix errors before saving.
+Hãy nhập tiêu đề và nội dung bài.=Enter a title and the lesson text.
+Hãy thêm và chọn một bài học trước.=Add and choose a lesson first.
+Hãy gõ hoặc chụp ảnh bài làm trước.=Type or photograph your answer first.
+Trình duyệt này chưa hỗ trợ nhận diện giọng nói. Hãy dùng Chrome hoặc Edge.=This browser does not support speech recognition. Use Chrome or Edge.
+Xóa bài này?=Delete this lesson?
+Đã lưu cài đặt.=Settings saved.
+Hãy cho phép trình duyệt dùng micro.=Please allow microphone access.
+Xóa toàn bộ lịch sử dò bài?=Delete all history?
+Ngôn ngữ=Language
+Khóa API Gemini (tùy chọn)=Gemini API key (optional)
+Tên model Gemini=Gemini model name
+Lưu cài đặt=Save settings
+Ghi âm=Voice
+Chụp ảnh=Photo
+Văn bản=Text
+Cách trả bài=Recite method
+Xóa và làm lại=Clear and redo
+Xóa và chụp lại=Clear and retake
+Chấm điểm=Grade
+Lịch đi học=School timetable
+Lịch tự học=Self-study plan
+Buổi sáng=Morning
+Buổi chiều=Afternoon
+Tiết=Period
+Hôm nay=Today
+Xóa lịch đi học=Clear school timetable
+Xóa toàn bộ lịch đi học?=Clear the whole school timetable?
+Mỗi ngày có 10 tiết: 5 tiết sáng và 5 tiết chiều. Chọn môn cho từng tiết, thay đổi được lưu tự động.=Each day has 10 periods: 5 in the morning and 5 in the afternoon. Pick a subject for each period; changes save automatically.
+Không có khóa: chấm bằng so khớp từ trên máy. Có khóa: AI chấm thêm màu cam và đọc ảnh chính xác hơn. Khóa chỉ lưu trên máy bạn.=No key: grading by word matching on this device. With a key: AI also credits right-meaning answers (orange) and reads photos better. The key stays on your device.
+Toán=Math
+Ngữ văn=Literature
+Tiếng Anh=English
+Vật lý=Physics
+Hóa học=Chemistry
+Sinh học=Biology
+Địa lý=Geography
+Giáo dục công dân=Civic education
+Giáo dục kinh tế và pháp luật=Economics and law education
+Tin học=Informatics
+Công nghệ=Technology
+Khoa học tự nhiên=Natural science
+Lịch sử và Địa lý=History and Geography
+Tiếng Việt=Vietnamese
+Đạo đức=Ethics
+Tự nhiên và Xã hội=Nature and Society
+Khoa học=Science
+Âm nhạc=Music
+Mỹ thuật=Art
+Giáo dục thể chất=Physical education
+Giáo dục quốc phòng và an ninh=Defense and security education
+Hoạt động trải nghiệm=Experiential activities
+Ngoại ngữ 2=Second foreign language
+Khác=Other
+Tài khoản=Account
+Đăng nhập=Log in
+Đăng nhập / Tạo tài khoản=Log in / Sign up
+Đổi tài khoản=Switch account
+Đăng xuất=Log out
+Tạo tài khoản=Create account
+Dùng không cần tài khoản=Use without an account
+Hủy=Cancel
+Đóng=Close
+Đồng ý=OK
+Tên đăng nhập=Username
+Mật khẩu=Password
+Chưa đăng nhập (dữ liệu lưu chung trên thiết bị này).=Not logged in (data is stored on this device).
+Hãy nhập tên đăng nhập và mật khẩu.=Enter a username and password.
+Tài khoản không tồn tại. Hãy bấm "Tạo tài khoản".=Account not found. Press "Create account".
+Sai mật khẩu.=Wrong password.
+Tên đăng nhập cần ít nhất 3 ký tự, không có khoảng trắng.=Username needs at least 3 characters, no spaces.
+Mật khẩu cần ít nhất 4 ký tự.=Password needs at least 4 characters.
+Tên đăng nhập đã có người dùng.=That username is taken.
+Chuyển dữ liệu đang có (chưa đăng nhập) vào tài khoản mới?=Move the existing (no-account) data into the new account?
+Đăng nhập để bài học, lịch sử, báo thức và thời khóa biểu được ghi nhớ theo tài khoản của bạn trên thiết bị này.=Log in so lessons, history, alarms and timetable are remembered for your account on this device.
+Sao lưu / Khôi phục=Backup / Restore
+Sao lưu=Back up
+Khôi phục=Restore
+Đã sao chép bản sao lưu. Hãy dán vào ghi chú để giữ.=Backup copied. Paste it into a note to keep it.
+Hãy chọn và sao chép đoạn mã bên dưới.=Select and copy the code below.
+Bản sao lưu không hợp lệ.=Invalid backup.
+Khôi phục sẽ ghi đè dữ liệu hiện tại. Tiếp tục?=Restoring overwrites current data. Continue?
+Đã khôi phục.=Restored.
+Tìm bài học=Search lessons
+Không tìm thấy.=Not found.
+Không tìm thấy bài nào.=No lessons found.
+Chưa có bài học nào=No lessons yet
+Hãy cho phép ứng dụng dùng micro (Cài đặt > Quyền).=Please allow microphone access (Settings > Permissions).
+Không tìm thấy micro.=No microphone found.
+Nhận diện giọng nói cần kết nối Internet.=Speech recognition needs an Internet connection.
+Thiết bị chưa hỗ trợ nhận diện tiếng Việt.=This device does not support this language.
+Máy chưa có dịch vụ nhận diện giọng nói của Google. Hãy cài hoặc cập nhật ứng dụng Google.=No Google speech service found. Install or update the Google app.
+Không bật được micro.=Could not start the microphone.
+Không nghe thấy giọng nói. Hãy kiểm tra micro rồi thử lại.=No speech heard. Check the microphone and try again.
+Không lưu được dữ liệu trên thiết bị này.=Could not save data on this device.
+Không gọi được AI, đang chấm bằng so khớp từ trên máy.=Could not reach the AI, grading by word matching on this device.`.split('\n').map(l=>l.split('=')));
+const R=Object.fromEntries(Object.entries(D).map(([a,b])=>[b,a]));
+const t=x=>(L==='en'&&D[x])||x;
+let toastT;function toast(m){const e=$('toast');e.textContent=t(m);e.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('on'),3400)}
+window.alert=toast;
+function ask(m,cb){$('dlgT').textContent=t(m);$('dlg').classList.add('on');
+  $('dlgOk').onclick=()=>{$('dlg').classList.remove('on');cb()};$('dlgNo').onclick=()=>$('dlg').classList.remove('on');$('dlgOk').focus()}
+// ----- Bảng chọn có ô tìm kiếm (dùng cho danh sách môn, bài học, ô thời khóa biểu) -----
+let pkOpts=[],pkVal='',pkCb=null;
+function openPicker(opts,val,cb){pkOpts=opts;pkVal=val;pkCb=cb;$('pkq').value='';drawPk();$('pk').classList.add('on');setTimeout(()=>$('pkq').focus(),60)}
+function drawPk(){const q=sq($('pkq').value),r=pkOpts.filter(o=>!q||sq(o.label).includes(q));
+  $('pkl').innerHTML=r.length?r.map(o=>`<button type="button" class="pki${o.v===pkVal?' on':''}" data-v="${esc(o.v)}">${esc(o.label)}</button>`).join(''):'<p class="note">Không tìm thấy.</p>'}
+$('pkq').oninput=drawPk;
+$('pkl').onclick=e=>{const b=e.target.closest('.pki');if(!b)return;$('pk').classList.remove('on');pkCb&&pkCb(b.dataset.v)};
+$('pkx').onclick=()=>$('pk').classList.remove('on');
+$('pk').onclick=e=>{if(e.target===$('pk'))$('pk').classList.remove('on')};
+function spSync(id){const s=$(id),b=$(id+'_b');if(!b)return;const o=s.options[s.selectedIndex];b.textContent=o?o.textContent:t('Chưa có bài học nào')}
+function spInit(id){const s=$(id);s.style.display='none';const b=document.createElement('button');b.type='button';b.className='sp';b.id=id+'_b';s.after(b);
+  b.onclick=()=>openPicker([...s.options].map(o=>({v:o.value,label:o.textContent})),s.value,v=>{s.value=v;spSync(id);s.dispatchEvent(new Event('change'))});spSync(id)}
+let lessons=store.get('lessons',[]),editId=null;
+const SUBJECTS=['Toán','Ngữ văn','Tiếng Anh','Vật lý','Hóa học','Sinh học','Lịch sử','Địa lý','Giáo dục công dân','Giáo dục kinh tế và pháp luật','Tin học','Công nghệ','Khoa học tự nhiên','Lịch sử và Địa lý','Tiếng Việt','Đạo đức','Tự nhiên và Xã hội','Khoa học','Âm nhạc','Mỹ thuật','Giáo dục thể chất','Giáo dục quốc phòng và an ninh','Hoạt động trải nghiệm','Ngoại ngữ 2','Khác'];
+const opt=a=>a.map(x=>`<option value="${x}">${t(x)}</option>`).join('');
+function fillSubjects(){[['sub',0],['fsub',1],['hsub',1],['tSub',0]].forEach(([id,all])=>{const e=$(id),v=e.value;
+  e.innerHTML=(all?`<option value="">${t('Tất cả môn')}</option>`:'')+opt(SUBJECTS);if(v)e.value=v;spSync(id)})}
+fillSubjects();['sub','fsub','hsub','tSub','pick'].forEach(spInit);
+$('fsub').onchange=()=>render();$('lq').oninput=()=>render();$('hsub').onchange=()=>renderHist();
+
+// Lessons
+function render(){
+  const q=sq($('lq').value),fl=lessons.filter(l=>(!$('fsub').value||l.sub===$('fsub').value)&&(!q||sq(l.title+' '+l.sub+' '+l.body).includes(q)));
+  $('list').innerHTML=fl.length?fl.map(l=>`<div class="item"><div><b>${esc(l.title)}</b><br><small>${esc(l.sub)}</small></div><div><button data-e="${l.id}">Sửa</button><button data-d="${l.id}">Xóa</button></div></div>`).join(''):`<p class="note">${t(lessons.length?'Không tìm thấy bài nào.':'Chưa có bài nào. Dán bài đầu tiên ở phía trên.')}</p>`;
+  const pv=$('pick').value;
+  $('pick').innerHTML=lessons.map(l=>`<option value="${l.id}">${esc(l.sub)} - ${esc(l.title)}</option>`).join('');
+  if(pv&&lessons.some(l=>l.id==pv))$('pick').value=pv;spSync('pick');
+}
+$('save').onclick=()=>{
+  const t=$('ttl').value.trim(),b=$('body').value.trim();
+  if(!t||!b){alert('Hãy nhập tiêu đề và nội dung bài.');return}
+  if(editId){const l=lessons.find(x=>x.id==editId);Object.assign(l,{sub:$('sub').value,title:t,body:b})}
+  else lessons.push({id:Date.now(),sub:$('sub').value,title:t,body:b});
+  store.set('lessons',lessons);reset();render();
+};
+function reset(){editId=null;$('ttl').value='';$('body').value='';$('save').textContent='Lưu bài'}
+$('clear').onclick=reset;
+$('list').onclick=e=>{
+  const d=e.target.dataset;
+  if(d.d)ask('Xóa bài này?',()=>{lessons=lessons.filter(l=>l.id!=d.d);store.set('lessons',lessons);render()});
+  if(d.e){const l=lessons.find(x=>x.id==d.e);editId=l.id;$('sub').value=l.sub;spSync('sub');$('ttl').value=l.title;$('body').value=l.body;$('save').textContent='Cập nhật bài';scrollTo(0,0)}
+};
+
+// Settings
+$('key').value=store.get('key','');$('model').value=store.get('model','gemini-2.5-flash');
+$('saveSet').onclick=()=>{store.set('key',$('key').value.trim());store.set('model',$('model').value.trim()||'gemini-2.5-flash');alert('Đã lưu cài đặt.')};
+
+// ===== Giọng nói: Web Speech (Chrome) hoặc cầu nối Android (SpeechRecognizer) =====
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition,NAT=window.AndroidSpeech||null;
+const canSpeak=()=>!!(NAT||SR),IS_AND=/Android/i.test(navigator.userAgent);
+let curL=null;
+window.__srEvent=(type,text)=>{if(curL)curL.nat(type,text)};
+// Mỗi "phiên" nghe là một lần nhận diện; hết phiên thì chốt chữ rồi tự mở phiên mới cho tới khi người dùng bấm dừng.
+function Listener(o){
+  let on=false,base='',sf='',si='',rec=null,tm=0,guard=0,fails=0,discard=false,ended=true,why='';
+  const j=(a,b)=>a&&b?a+' '+b:(a||b),lang=()=>L==='en'?'en-US':'vi-VN',upd=()=>o.onUpdate(j(base,sf.trim()),si.trim());
+  const fatal=m=>{why=m;on=false;clearTimeout(guard);guard=setTimeout(end,800)};
+  const api={
+    start(){on=true;base='';sf='';si='';fails=0;why='';curL=api;begin()},
+    stop(){if(!on)return;on=false;if(ended){clearTimeout(tm);done();return}
+      try{NAT?NAT.stop():rec&&rec.stop()}catch(e){}guard=setTimeout(end,2500)},
+    reset(){base='';sf='';si='';upd();if(!ended){discard=true;try{if(NAT){NAT.abort();end()}else rec&&rec.abort()}catch(e){}}},
+    cancel(){on=false;clearTimeout(tm);clearTimeout(guard);const r=rec;rec=null;
+      try{if(r){r.onend=null;r.abort()}}catch(e){}
+      try{if(NAT){NAT.abort();NAT.release()}}catch(e){}
+      ended=true;if(curL===api)curL=null},
+    nat(type,x){
+      if(type==='partial'){if(!ended){si=x||'';if(x)fails=0;upd()}}
+      else if(type==='final'){if(!ended){sf=x||'';si='';if(x)fails=0;upd()}}
+      else if(type==='error')err(x);
+      else if(type==='end')end()}
+  };
+  function begin(){
+    if(!on)return;sf='';si='';ended=false;
+    if(NAT){try{NAT.start(lang())}catch(e){fatal('Không bật được micro.')}return}
+    const r=new SR();rec=r;r.lang=lang();r.continuous=!IS_AND;r.interimResults=true;
+    r.onresult=e=>{if(r!==rec)return;fails=0;let f='',i='';
+      for(let k=0;k<e.results.length;k++){const x=e.results[k][0].transcript;if(e.results[k].isFinal)f+=x+' ';else i+=x}
+      sf=f;si=i;upd()};
+    r.onerror=e=>{if(r===rec)err(e.error)};
+    r.onend=()=>{if(r===rec){rec=null;end()}};
+    try{r.start()}catch(e){rec=null;fails++;ended=true;if(on&&fails<12)tm=setTimeout(begin,500);else{why='Không bật được micro.';on=false;done()}}
+  }
+  function err(c){
+    if(c==='no-speech'||c==='aborted'||c==='busy'||c==='interrupted'){if(c!=='aborted')fails++;return}
+    if(c==='not-allowed'||c==='service-not-allowed')return fatal('Hãy cho phép ứng dụng dùng micro (Cài đặt > Quyền).');
+    if(c==='audio-capture')return fatal('Không tìm thấy micro.');
+    if(c==='network')return fatal('Nhận diện giọng nói cần kết nối Internet.');
+    if(c==='language-not-supported')return fatal('Thiết bị chưa hỗ trợ nhận diện tiếng Việt.');
+    if(c==='unsupported')return fatal('Máy chưa có dịch vụ nhận diện giọng nói của Google. Hãy cài hoặc cập nhật ứng dụng Google.');
+    fails++}
+  function end(){
+    if(ended)return;ended=true;clearTimeout(guard);
+    if(discard){discard=false;base='';sf='';si=''}else{base=j(base,j(sf.trim(),si.trim()));sf='';si=''}
+    if(on&&fails>=12){on=false;why='Không nghe thấy giọng nói. Hãy kiểm tra micro rồi thử lại.'}
+    if(on){upd();tm=setTimeout(begin,NAT||IS_AND?300:120);return}
+    done()}
+  function done(){clearTimeout(guard);try{NAT&&NAT.release()}catch(e){}if(curL===api)curL=null;upd();o.onStop(why)}
+  return api}
+
+let finalText='',interim='',ls=null,dl=null;
+const current=()=>lessons.find(l=>l.id==$('pick').value);
+const micIdle=()=>{$('mic').textContent=t('Bắt đầu đọc');$('mic').classList.remove('rec')};
+$('mic').onclick=()=>{
+  if(ls){ls.stop();return}
+  if(!canSpeak()){alert('Trình duyệt này chưa hỗ trợ nhận diện giọng nói. Hãy dùng Chrome hoặc Edge.');return}
+  if(!current()){alert('Hãy thêm và chọn một bài học trước.');return}
+  if(dl){dl.cancel();dl=null}
+  finalText='';interim='';$('result').innerHTML='';$('hint').textContent='';
+  $('mic').textContent=t('Dừng và chấm điểm');$('mic').classList.add('rec');$('live').textContent=t('Đang nghe...');
+  ls=Listener({onUpdate:(f,i)=>{finalText=f;interim=i;$('live').textContent=(f+' '+i).trim()||t('Đang nghe...')},
+    onStop:why=>{ls=null;micIdle();finish(why)}});
+  ls.start();
+};
+function finish(why){
+  const l=current(),spoken=(finalText+' '+interim).trim();
+  if(!spoken||!l){$('live').textContent=t(why||'Chưa nghe thấy gì. Hãy thử lại.');return}
+  if(why)toast(why);
+  const fixed=correct(spoken,l.body);
+  $('live').textContent=fixed;grade(l,fixed);
+}
+
+// Sửa lỗi nhận diện: đối chiếu với từ vựng của bài gốc (sai dấu thanh hoặc lệch 1 chữ cái)
+function lev(a,b){const m=[...Array(a.length+1)].map((_,i)=>[i]);for(let j=1;j<=b.length;j++)m[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length]}
+function correct(spoken,body){
+  const vocab=[...new Set(body.split(/\s+/).filter(Boolean).map(norm))],exact=new Set(vocab),bp={};
+  vocab.forEach(v=>(bp[plain(v)]??=new Set()).add(v));
+  return spoken.split(/\s+/).filter(Boolean).map(w=>{
+    const n=norm(w);if(exact.has(n))return w;
+    const s=bp[plain(n)];if(s&&s.size===1)return [...s][0];
+    if(n.length>=5){const c=vocab.filter(v=>Math.abs(v.length-n.length)<=1&&lev(plain(v),plain(n))<=1);if(c.length===1)return c[0]}
+    return w}).join(' ');
+}
+
+// Nhập bài bằng giọng nói
+$('dict').onclick=()=>{
+  if(dl){dl.stop();return}
+  if(!canSpeak()){alert('Trình duyệt này chưa hỗ trợ nhận diện giọng nói. Hãy dùng Chrome hoặc Edge.');return}
+  if(ls){ls.cancel();ls=null;micIdle()}
+  const pre=$('body').value.trim(),cap=x=>x?x.charAt(0).toUpperCase()+x.slice(1):x;
+  $('dict').textContent=t('Dừng nhập');$('st').textContent=t('Đang nghe, hãy đọc nội dung bài...');
+  dl=Listener({onUpdate:(f,i)=>{const x=(f+' '+i).trim();$('body').value=(pre&&x?pre+' ':pre)+cap(x)},
+    onStop:why=>{dl=null;$('dict').textContent=t('Nhập bằng giọng nói');$('st').textContent=why?t(why):t('Đã dừng. Hãy đọc lại và sửa lỗi trước khi lưu.')}});
+  dl.start();
+};
+
+// Nhập bài bằng ảnh (có khóa Gemini thì dùng AI đọc ảnh, không thì dùng Tesseract trên máy)
+const gUrl=k=>`https://generativelanguage.googleapis.com/v1beta/models/${store.get('model','gemini-2.5-flash')}:generateContent?key=${encodeURIComponent(k)}`;
+function toJpeg(f){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>{const s=Math.min(1,2000/Math.max(im.width,im.height)),c=document.createElement('canvas');
+  c.width=im.width*s;c.height=im.height*s;c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.92).split(',')[1])};im.onerror=no;im.src=URL.createObjectURL(f)})}
+async function ocrAI(f,key){
+  const data=await toJpeg(f);
+  const r=await fetch(gUrl(key),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[
+    {text:'Đây là ảnh chụp trang sách hoặc vở tiếng Việt. Chép lại chính xác từng chữ theo thứ tự đọc, giữ đầy đủ dấu thanh và dấu mũ. Gộp các dòng cùng một đoạn thành một đoạn, giữa các đoạn xuống dòng. Bỏ qua số trang và hình minh họa. Không sửa nội dung, không bình luận.'},
+    {inlineData:{mimeType:'image/jpeg',data}}]}],generationConfig:{temperature:0}})});
+  if(!r.ok)throw new Error(r.status);
+  return (await r.json()).candidates[0].content.parts.map(p=>p.text||'').join('');
+}
+function loadScript(src){return new Promise((ok,no)=>{if(window.Tesseract)return ok();const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+// Làm sạch ảnh cho Tesseract: phóng to, xám hóa, nhị phân hóa theo vùng để khử bóng và nền ố
+function prep(f){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>{
+  const sc=Math.min(2200/Math.max(im.width,im.height),2.5),w=Math.round(im.width*sc),h=Math.round(im.height*sc);
+  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(im,0,0,w,h);
+  const d=x.getImageData(0,0,w,h),p=d.data,g=new Float32Array(w*h),W=w+1,I=new Float64Array(W*(h+1));
+  for(let i=0;i<g.length;i++)g[i]=.299*p[i*4]+.587*p[i*4+1]+.114*p[i*4+2];
+  for(let y=0;y<h;y++){let r=0;for(let u=0;u<w;u++){r+=g[y*w+u];I[(y+1)*W+u+1]=I[y*W+u+1]+r}}
+  const R=Math.max(15,Math.round(w/40));
+  for(let y=0;y<h;y++)for(let u=0;u<w;u++){
+    const x0=Math.max(0,u-R),x1=Math.min(w,u+R+1),y0=Math.max(0,y-R),y1=Math.min(h,y+R+1);
+    const m=(I[y1*W+x1]-I[y0*W+x1]-I[y1*W+x0]+I[y0*W+x0])/((x1-x0)*(y1-y0));
+    const v=g[y*w+u]<m*.88?0:255,k=(y*w+u)*4;p[k]=p[k+1]=p[k+2]=v;p[k+3]=255}
+  x.putImageData(d,0,0);c.toBlob(ok,'image/png')};im.onerror=no;im.src=URL.createObjectURL(f)})}
+async function ocrLocal(f){
+  await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js');
+  const img=await prep(f),wk=await Tesseract.createWorker('vie');
+  await wk.setParameters({tessedit_pageseg_mode:'6',preserve_interword_spaces:'1'});
+  const t=(await wk.recognize(img)).data.text;await wk.terminate();
+  return t.replace(/\n(?!\n)/g,' ');
+}
+$('scan').onclick=()=>$('img').click();
+$('img').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  $('st').textContent='Đang nhận dạng chữ trong ảnh, vui lòng đợi...';
+  try{
+    const key=store.get('key','');let text='';
+    if(key){try{text=await ocrAI(f,key)}catch(x){console.error(x)}}
+    let local=false;
+    if(!text.trim()){local=true;$('st').textContent='Đang đọc ảnh bằng chế độ miễn phí trên máy, có thể mất 20-60 giây...';text=await ocrLocal(f)}
+    if(!text.trim())throw new Error('empty');
+    $('body').value+=($('body').value?'\n':'')+text.trim();
+    $('st').textContent=local?'Xong, nhưng chế độ miễn phí đọc tiếng Việt còn yếu. Thêm khóa Gemini ở tab Cài đặt để đọc chuẩn hơn. Hãy sửa lỗi chữ trước khi lưu.':'Xong. Hãy đọc lại và sửa lỗi chữ trước khi lưu.';
+  }catch(err){console.error(err);$('st').textContent='Không nhận dạng được. Hãy thử ảnh rõ nét, đủ sáng, chụp thẳng trang sách.'}
+};
+
+// Hint: tìm vị trí đang đọc trong bài gốc rồi hiện 4 từ tiếp theo
+$('hintBtn').onclick=()=>{
+  const l=current();if(!l){alert('Hãy thêm và chọn một bài học trước.');return}
+  const L=l.body.split(/\s+/).filter(Boolean),Ln=L.map(norm);
+  const S=(finalText+' '+interim).split(/\s+/).filter(Boolean).map(norm).slice(-5);
+  let best=-1,bs=0;
+  for(let i=0;i<Ln.length;i++){let s=0;S.forEach((w,k)=>{if(Ln[i-S.length+1+k]===w)s++});if(s>bs){bs=s;best=i}}
+  const start=bs>=1?best+1:0;
+  $('hint').textContent=t('Gợi ý')+': '+(L.slice(start,start+4).join(' ')||'(hết bài)')+' ...';
+};
+
+// Grading
+async function grade(l,spoken){
+  $('result').innerHTML='<div class="box">Đang chấm điểm...</div>';
+  const key=store.get('key','');let data=null,note='';
+  if(key){try{data=await gradeAI(l.body,spoken,key)}catch(e){console.error(e);note='Không gọi được AI, đang chấm bằng so khớp từ trên máy.'}}
+  if(!data)data=gradeLocal(l.body,spoken);
+  show(data,note);
+  hist.unshift({ts:Date.now(),sub:l.sub,title:l.title,score:Math.round(+data.score||0),segments:data.segments});
+  hist=hist.slice(0,100);store.set('hist',hist);renderHist();renderHome();
+}
+async function gradeAI(orig,spoken,key){
+  const prompt=(L==='en'?'Write the "summary" field in English.\n':'')+`Bạn là giáo viên chấm bài trả bài miệng. So sánh BÀI GỐC với LỜI HỌC SINH ĐỌC (văn bản nhận diện giọng nói, có thể sai chính tả nhẹ, bỏ qua lỗi nhận diện nhỏ).
+Chia toàn bộ BÀI GỐC thành các đoạn liên tiếp (giữ nguyên chữ, ghép lại phải đủ bài gốc). Gán mỗi đoạn một trạng thái:
+- "exact": học sinh đọc đúng gần như nguyên văn
+- "synonym": học sinh diễn đạt khác (từ đồng nghĩa, đảo từ) nhưng đúng ý
+- "missing": bỏ sót hoặc sai ý, sai mốc thời gian/số liệu
+Chấm "score" từ 0 đến 100 theo mức độ đúng ý chính. "summary" là nhận xét ngắn 1-2 câu bằng tiếng Việt.
+Chỉ trả về JSON: {"score":number,"summary":string,"segments":[{"text":string,"status":"exact|synonym|missing"}]}
+BÀI GỐC:\n${orig}\n\nLỜI HỌC SINH:\n${spoken}`;
+  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${store.get('model','gemini-2.5-flash')}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:0.2}})});
+  if(!r.ok)throw new Error(r.status);
+  const j=await r.json();
+  const d=JSON.parse(j.candidates[0].content.parts[0].text.replace(/```json|```/g,'').trim());
+  if(!Array.isArray(d.segments))throw new Error('format');
+  return d;
+}
+function gradeLocal(orig,spoken){
+  const set=new Set(spoken.split(/\s+/).map(norm));
+  const words=orig.split(/\s+/).filter(Boolean);
+  const segs=[];let ok=0;
+  words.forEach(w=>{const s=set.has(norm(w))?'exact':'missing';if(s==='exact')ok++;
+    const last=segs[segs.length-1];last&&last.status===s?last.text+=' '+w:segs.push({text:w,status:s})});
+  return{score:Math.round(ok/words.length*100),summary:'Chấm bằng so khớp từ trên máy. Thêm khóa Gemini để AI nhận ra câu đúng ý nhưng khác chữ.',segments:segs};
+}
+let hist=store.get('hist',[]);
+const fmt=t=>new Date(t).toLocaleString(L==='en'?'en-US':'vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const segsHtml=a=>{const c={exact:'g',synonym:'o',missing:'m'};return a.map(s=>`<span class="${c[s.status]||'m'}">${esc(s.text)}</span>`).join(' ')};
+function renderHist(){
+  const f=$('hsub').value,h=hist.filter(x=>!f||x.sub===f);
+  const avg=h.length?Math.round(h.reduce((a,x)=>a+x.score,0)/h.length):0,best=h.length?Math.max(...h.map(x=>x.score)):0;
+  $('hsum').textContent=h.length?`${h.length} lượt dò bài, trung bình ${avg}%, cao nhất ${best}%.`:'Chưa có lượt dò bài nào. Hãy trả bài một lần để lưu vào đây.';
+  $('hlist').innerHTML=h.map(x=>`<details class="hi"><summary><b>${esc(x.title)}</b> <small>(${esc(x.sub)})</small><br><small>${fmt(x.ts)}</small> &nbsp; <b>${x.score}%</b></summary><div class="box">${segsHtml(x.segments)}</div></details>`).join('');
+}
+$('hclear').onclick=()=>{ask('Xóa toàn bộ lịch sử dò bài?',()=>{hist=[];store.set('hist',hist);renderHist();renderHome()})};
+function show(d,note){
+  const cls={exact:'g',synonym:'o',missing:'m'};
+  $('result').innerHTML=`<div class="box"><div class="score">${Math.round(+d.score||0)}%</div>${note?`<p class="note">${esc(t(note))}</p>`:''}<p>${esc(d.summary||'')}</p>
+  <p class="legend"><span><span class="g">Chính xác</span></span><span><span class="o">Đúng ý</span></span><span><span class="m">Thiếu / sai</span></span></p>
+  <div>${d.segments.map(s=>`<span class="${cls[s.status]||'m'}">${esc(String(s.text||''))}</span>`).join(' ')}</div></div>`;
+}
+
+// ===== Điều hướng =====
+let cur='home';
+const go=p=>{cur=p;stopSilent();document.querySelectorAll('.page').forEach(e=>e.classList.toggle('on',e.id==='p-'+p));
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));if(p==='home')renderHome();scrollTo(0,0)};
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go(b.dataset.p));
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+document.querySelectorAll('.subnav button').forEach(b=>b.onclick=()=>{stopSilent();
+  b.parentElement.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  b.closest('.page').querySelectorAll('.sub').forEach(s=>s.classList.toggle('on',s.id===b.dataset.s))});
+
+// ===== Báo thức & thời khóa biểu =====
+let alarms=store.get('alarms',[]),tt=store.get('tt',[]);
+const p2=n=>String(n).padStart(2,'0'),ORDER=[1,2,3,4,5,6,0];
+const dn=i=>(L==='en'?['Sun','Mon','Tue','Wed','Thu','Fri','Sat']:['CN','T2','T3','T4','T5','T6','T7'])[i];
+function renderChips(){$('aD').innerHTML=ORDER.map(i=>`<label><input type="checkbox" value="${i}"><span>${dn(i)}</span></label>`).join('')}
+function renderAlarms(){
+  $('aList').innerHTML=alarms.length?alarms.sort((a,b)=>a.t<b.t?-1:1).map(a=>`<div class="item"><div><span class="tm">${a.t}</span><br><small>${esc(a.l||'')} ${a.d.length?ORDER.filter(i=>a.d.includes(i)).map(dn).join(' '):t('Hằng ngày')}</small></div><div><input type="checkbox" ${a.on?'checked':''} data-on="${a.id}" aria-label="on/off"><button data-ad="${a.id}">${t('Xóa')}</button></div></div>`).join(''):`<p class="note">${t('Chưa có báo thức nào.')}</p>`;
+}
+$('aAdd').onclick=()=>{
+  alarms.push({id:Date.now(),t:$('aT').value||'06:30',l:$('aL').value.trim(),d:[...document.querySelectorAll('#aD input:checked')].map(x=>+x.value),on:true});
+  $('aL').value='';store.set('alarms',alarms);renderChips();renderAlarms();renderHome();
+  try{if(Notification.permission==='default')Notification.requestPermission()}catch{}
+};
+$('aList').onclick=e=>{const id=e.target.dataset.ad;if(id){alarms=alarms.filter(a=>a.id!=id);store.set('alarms',alarms);renderAlarms();renderHome()}};
+$('aList').onchange=e=>{const a=alarms.find(x=>x.id==e.target.dataset.on);if(a){a.on=e.target.checked;store.set('alarms',alarms);renderHome()}};
+
+function renderTT(){
+  const td=new Date().getDay(),v=$('tD').value;
+  $('tD').innerHTML=ORDER.map(i=>`<option value="${i}">${dn(i)}</option>`).join('');if(v)$('tD').value=v;
+  $('tList').innerHTML=ORDER.map(i=>{const es=tt.filter(x=>x.d===i).sort((a,b)=>a.s<b.s?-1:1);
+    return `<div class="pn${i===td?' today':''}"><b>${dn(i)}${i===td?' ('+t('hôm nay')+')':''}</b>`+(es.length?es.map(x=>`<div class="ent"><span><span class="tm2">${x.s}-${x.e}</span> <b>${esc(t(x.sub))}</b> <small>${esc(x.n||'')}</small></span><button data-td="${x.id}" aria-label="${t('Xóa')}">✕</button></div>`).join(''):'<div class="note">-</div>')+'</div>'}).join('');
+}
+$('tAdd').onclick=()=>{
+  const s=$('tS').value,e=$('tE').value;if(!s||!e||e<=s){alert('Giờ kết thúc phải sau giờ bắt đầu.');return}
+  tt.push({id:Date.now(),d:+$('tD').value,s,e,sub:$('tSub').value,n:$('tN').value.trim()});$('tN').value='';
+  store.set('tt',tt);renderTT();renderHome();
+};
+$('tList').onclick=e=>{const id=e.target.dataset.td;if(id){tt=tt.filter(x=>x.id!=id);store.set('tt',tt);renderTT();renderHome()}};
+
+// ===== Trang chủ, đồng hồ, chuông báo =====
+function renderHome(){
+  const d=new Date(),now=p2(d.getHours())+':'+p2(d.getMinutes()),h=d.getHours();
+  const su=(gstore.get('session',null)||{}).u;
+  $('greet').textContent=t(h<11?'Chào buổi sáng':h<18?'Chào buổi chiều':'Chào buổi tối')+(su?', '+su:'');
+  const c=tt.filter(x=>x.d===d.getDay()&&x.e>now).sort((a,b)=>a.s<b.s?-1:1)[0];
+  const ss=(schd[d.getDay()]||[]).filter(Boolean);
+  $('hTt').textContent=c?`${t(c.sub)} ${c.s}-${c.e}`:ss.length?t('Hôm nay')+': '+ss.slice(0,4).map(t).join(', ')+(ss.length>4?'...':''):t('Không còn tiết nào hôm nay.');
+  const a=alarms.filter(x=>x.on&&x.t>now&&(!x.d.length||x.d.includes(d.getDay()))).sort((a,b)=>a.t<b.t?-1:1)[0];
+  $('hAl').textContent=a?`${a.t} ${a.l||''}`:t('Chưa có báo thức sắp tới hôm nay.');
+  const n=hist.length;
+  $('hSt').textContent=n?`${n} ${t('lượt dò bài')}, ${t('trung bình')} ${Math.round(hist.reduce((s,x)=>s+x.score,0)/n)}%`:t('Chưa có lượt dò bài nào.');
+}
+let ctx=null,ringI=null,lastMin='';
+const wake=()=>{try{if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume()}catch{}};
+['pointerdown','touchstart','keydown','click'].forEach(ev=>document.addEventListener(ev,wake,{passive:true}));
+function beep(){wake();if(!ctx)return;const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=880;g.gain.value=.15;o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.25)}
+function ring(a){
+  const m=a.l||t('Đến giờ học!');$('ringT').textContent=a.t;$('ringL').textContent=m;$('ring').classList.add('on');
+  clearInterval(ringI);clearTimeout(ringTO);ringTO=setTimeout(()=>$('ringOff').click(),120000);ringI=setInterval(beep,600);beep();navigator.vibrate&&navigator.vibrate([300,150,300]);
+  try{if(Notification.permission==='granted')new Notification(m)}catch{}
+}
+let ringTO=0;
+$('ringOff').onclick=()=>{clearInterval(ringI);clearTimeout(ringTO);$('ring').classList.remove('on')};
+let lastEm=Math.floor(Date.now()/60000)-1;
+function tick(){
+  const now=Date.now(),d=new Date(now),em=Math.floor(now/60000);
+  $('clock').textContent=p2(d.getHours())+':'+p2(d.getMinutes())+':'+p2(d.getSeconds());
+  $('date').textContent=d.toLocaleDateString(L==='en'?'en-US':'vi-VN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  if(em>lastEm){ // bù các phút bị bỏ lỡ (máy ngủ/ứng dụng nền) tối đa 15 phút
+    let hit=null;
+    for(let m=Math.max(lastEm+1,em-15);m<=em;m++){const x=new Date(m*60000),k=p2(x.getHours())+':'+p2(x.getMinutes());
+      alarms.filter(a=>a.on&&a.t===k&&(!a.d.length||a.d.includes(x.getDay()))).forEach(a=>hit=a)}
+    lastEm=em;if(hit)ring(hit);renderHome()}
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopSilent();else tick()});
+setInterval(tick,1000);
+
+// ===== Trả bài: 3 cách riêng (ghi âm / chụp ảnh / văn bản) =====
+function stopSilent(){
+  if(ls){ls.cancel();ls=null;micIdle()}
+  if(dl){dl.cancel();dl=null;$('dict').textContent=t('Nhập bằng giọng nói')}
+}
+document.querySelectorAll('.mode-nav button').forEach(b=>b.onclick=()=>{
+  stopSilent();$('result').innerHTML='';
+  document.querySelectorAll('.mode-nav button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.mode').forEach(p=>p.classList.toggle('on',p.id==='m-'+b.dataset.m))});
+$('redo').onclick=()=>{ // xóa tất cả và đọc lại ngay, kể cả khi đang thu âm
+  finalText='';interim='';$('result').innerHTML='';$('hint').textContent='';
+  if(ls){ls.reset();$('live').textContent=t('Đang nghe...')}else $('mic').click();
+};
+const gradeFrom=id=>{
+  const l=current(),v=$(id).value.trim();
+  if(!l){alert('Hãy thêm và chọn một bài học trước.');return}
+  if(!v){alert('Hãy gõ hoặc chụp ảnh bài làm trước.');return}
+  grade(l,v);
+};
+$('gradeT').onclick=()=>gradeFrom('typed');$('gradeP').onclick=()=>gradeFrom('photoTxt');
+$('clrT').onclick=()=>{$('typed').value='';$('result').innerHTML='';$('typed').focus()};
+$('clrP').onclick=()=>{$('photoTxt').value='';$('stT').textContent='';$('result').innerHTML='';$('imgT').click()};
+$('scanT').onclick=()=>$('imgT').click();
+$('imgT').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  $('stT').textContent=t('Đang nhận dạng chữ trong ảnh, vui lòng đợi...');
+  try{const key=store.get('key','');let x='';
+    if(key){try{x=await ocrAI(f,key)}catch(c){console.error(c)}}
+    if(!x.trim())x=await ocrLocal(f);
+    if(!x.trim())throw 0;
+    $('photoTxt').value+=($('photoTxt').value?'\n':'')+x.trim();
+    $('stT').textContent=t('Xong. Hãy kiểm tra và sửa lỗi chữ rồi bấm "Chấm điểm".');
+  }catch(c){$('stT').textContent=t('Không nhận dạng được. Hãy thử ảnh rõ nét, đủ sáng, chụp thẳng trang sách.')}
+};
+
+// ===== Thời khóa biểu đi học: T2-CN, mỗi ngày 10 tiết (5 sáng + 5 chiều) =====
+let schd=store.get('sch',{});
+function renderSch(){
+  const td=new Date().getDay();
+  let h=`<tr><th></th>${ORDER.map(i=>`<th class="${i===td?'today':''}">${dn(i)}</th>`).join('')}</tr>`;
+  for(let k=0;k<10;k++){
+    if(k%5===0)h+=`<tr><th colspan="8" class="grp">${t(k?'Buổi chiều':'Buổi sáng')}</th></tr>`;
+    h+=`<tr><th class="p">${t('Tiết')} ${k+1}</th>`+ORDER.map(i=>{const v=(schd[i]||[])[k]||'';
+      return `<td><button type="button" class="cell${v?' f':''}" data-d="${i}" data-k="${k}" aria-label="${dn(i)} ${t('Tiết')} ${k+1}">${v?esc(t(v)):'—'}</button></td>`}).join('')+'</tr>';
+  }
+  $('schT').innerHTML=h;
+}
+$('schT').onclick=e=>{const b=e.target.closest('.cell');if(!b)return;const d=b.dataset.d,k=+b.dataset.k,cv=(schd[d]||[])[k]||'';
+  openPicker([{v:'',label:'—'},...SUBJECTS.map(x=>({v:x,label:t(x)}))],cv,v=>{
+    const a=schd[d]||(schd[d]=Array(10).fill(''));a[k]=v;store.set('sch',schd);b.textContent=v?t(v):'—';b.classList.toggle('f',!!v);renderHome()})};
+$('schClr').onclick=()=>{ask('Xóa toàn bộ lịch đi học?',()=>{schd={};store.set('sch',schd);renderSch();renderHome()})};
+
+// ===== Đổi ngôn ngữ (dịch cả chữ tạo động nhờ MutationObserver) =====
+function tx(n){const s=n.nodeValue,k=s.trim();if(!k)return;const m=(L==='en'?D:R)[k];if(m)n.nodeValue=s.replace(k,m)}
+function walk(r){const w=document.createTreeWalker(r,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())tx(n)}
+new MutationObserver(ms=>ms.forEach(m=>m.type==='characterData'?tx(m.target):m.addedNodes.forEach(a=>a.nodeType===3?tx(a):a.nodeType===1&&walk(a))))
+  .observe(document.body,{childList:true,subtree:true,characterData:true});
+function applyLang(){
+  document.documentElement.lang=L;$('lang').value=L;walk(document.body);
+  document.querySelectorAll('[data-en]').forEach(e=>e.placeholder=L==='en'?e.dataset.en:e.dataset.vi);
+  fillSubjects();renderChips();renderAll();tick();
+}
+$('lang').onchange=()=>{L=$('lang').value;gstore.set('lang',L);applyLang()};
+function renderAll(){renderAlarms();renderTT();renderSch();renderHome();render();renderHist();renderAcc()}
+
+// ===== Tài khoản (lưu trên thiết bị, dữ liệu tách riêng theo từng tài khoản) =====
+function sha256(msg){
+  const b=new TextEncoder().encode(msg),K=[],H=[];let n=2,c=0;
+  while(c<64){let p=1;for(let d=2;d*d<=n;d++)if(n%d===0){p=0;break}
+    if(p){if(c<8)H[c]=(Math.pow(n,.5)%1)*4294967296|0;K[c]=(Math.pow(n,1/3)%1)*4294967296|0;c++}n++}
+  const l=b.length,pad=new Uint8Array(((l+9+63)>>6)<<6);pad.set(b);pad[l]=0x80;
+  const dv=new DataView(pad.buffer);dv.setUint32(pad.length-4,(l*8)>>>0);dv.setUint32(pad.length-8,Math.floor(l*8/4294967296));
+  let h=H.slice();
+  for(let o=0;o<pad.length;o+=64){
+    const W=new Array(64);for(let i=0;i<16;i++)W[i]=dv.getUint32(o+i*4);
+    for(let i=16;i<64;i++){const a=W[i-15],e=W[i-2];
+      W[i]=(W[i-16]+((a>>>7|a<<25)^(a>>>18|a<<14)^(a>>>3))+W[i-7]+((e>>>17|e<<15)^(e>>>19|e<<13)^(e>>>10)))|0}
+    let [a,b2,c2,d,e,f,g,hh]=h;
+    for(let i=0;i<64;i++){
+      const t1=(hh+((e>>>6|e<<26)^(e>>>11|e<<21)^(e>>>25|e<<7))+((e&f)^(~e&g))+K[i]+W[i])|0,
+            t2=(((a>>>2|a<<30)^(a>>>13|a<<19)^(a>>>22|a<<10))+((a&b2)^(a&c2)^(b2&c2)))|0;
+      hh=g;g=f;f=e;e=(d+t1)|0;d=c2;c2=b2;b2=a;a=(t1+t2)|0}
+    const v=[a,b2,c2,d,e,f,g,hh];h=h.map((x,i)=>(x+v[i])|0)}
+  return h.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('')}
+const hp=(u,p,s)=>{let h=sha256(s+':'+u+':'+p);for(let i=0;i<1500;i++)h=sha256(h+s);return h};
+const rnd=()=>{const a=new Uint8Array(12);if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(a);else for(let i=0;i<12;i++)a[i]=Math.random()*256;return[...a].map(x=>x.toString(16).padStart(2,'0')).join('')};
+const accts=()=>gstore.get('accounts',{});
+const auErr=m=>{$('auE').textContent=t(m)};
+function showAuth(cancelable){$('auth').classList.add('on');$('auE').textContent='';$('auP').value='';$('auCancel').hidden=!cancelable;setTimeout(()=>$('auU').focus(),60)}
+function stopAll(){stopSilent()}
+function loadUser(){
+  stopSilent();
+  lessons=store.get('lessons',[]);hist=store.get('hist',[]);alarms=store.get('alarms',[]);tt=store.get('tt',[]);schd=store.get('sch',{});
+  if(!Array.isArray(lessons))lessons=[];if(!Array.isArray(hist))hist=[];if(!Array.isArray(alarms))alarms=[];if(!Array.isArray(tt))tt=[];
+  $('key').value=store.get('key','');$('model').value=store.get('model','gemini-2.5-flash');
+  editId=null;$('ttl').value='';$('body').value='';$('save').textContent=t('Lưu bài');$('typed').value='';$('photoTxt').value='';$('result').innerHTML='';$('lq').value='';$('live').textContent=t('Bấm "Bắt đầu đọc" rồi đọc bài. Chữ sẽ hiện ở đây.');
+  renderAll()}
+function setSession(u){gstore.set('session',{u});PFX=u?'u_'+u+'_':'';$('auth').classList.remove('on');loadUser();go('home')}
+function logout(){gstore.set('session',null);PFX='__none__';stopSilent();lessons=[];hist=[];alarms=[];tt=[];schd={};
+  $('key').value='';$('body').value='';$('ttl').value='';$('typed').value='';$('photoTxt').value='';$('result').innerHTML='';$('bk').value='';renderAll();go('home');showAuth(false)}
+function renderAcc(){const u=(gstore.get('session',null)||{}).u;
+  $('acInfo').textContent=u?t('Tài khoản')+': '+u:t('Chưa đăng nhập (dữ liệu lưu chung trên thiết bị này).');
+  $('acOut').hidden=!u;$('acIn').textContent=t(u?'Đổi tài khoản':'Đăng nhập / Tạo tài khoản')}
+const cred=()=>({u:$('auU').value.trim().toLowerCase(),p:$('auP').value});
+$('auLogin').onclick=()=>{const{u,p}=cred();
+  if(!u||!p)return auErr('Hãy nhập tên đăng nhập và mật khẩu.');
+  const a=accts()[u];if(!a)return auErr('Tài khoản không tồn tại. Hãy bấm "Tạo tài khoản".');
+  if(hp(u,p,a.s)!==a.h)return auErr('Sai mật khẩu.');
+  setSession(u)};
+$('auReg').onclick=()=>{const{u,p}=cred();
+  if(u.length<3||/\s/.test(u))return auErr('Tên đăng nhập cần ít nhất 3 ký tự, không có khoảng trắng.');
+  if(p.length<4)return auErr('Mật khẩu cần ít nhất 4 ký tự.');
+  const all=accts();if(all[u])return auErr('Tên đăng nhập đã có người dùng.');
+  const sl=rnd();all[u]={s:sl,h:hp(u,p,sl),c:Date.now()};gstore.set('accounts',all);
+  const had=['lessons','hist','alarms','tt','sch'].some(k=>{const v=gstore.get(k,null);return v&&Object.keys(v).length});
+  const fin=mig=>{if(mig)USER_KEYS.forEach(k=>{const v=gstore.get(k,null);if(v!=null)gstore.set('u_'+u+'_'+k,v)});setSession(u)};
+  if(had)ask('Chuyển dữ liệu đang có (chưa đăng nhập) vào tài khoản mới?',()=>fin(true));else fin(false)};
+$('auP').onkeydown=e=>{if(e.key==='Enter')$('auLogin').click()};
+$('auGuest').onclick=()=>setSession(null);
+$('auCancel').onclick=()=>$('auth').classList.remove('on');
+$('acIn').onclick=()=>showAuth(true);$('acOut').onclick=logout;
+$('bkOut').onclick=()=>{const o={v:1};USER_KEYS.filter(k=>k!=='key').forEach(k=>o[k]=store.get(k,null));
+  const bk=$('bk');bk.value=JSON.stringify(o);bk.select();
+  try{navigator.clipboard.writeText(bk.value).then(()=>toast('Đã sao chép bản sao lưu. Hãy dán vào ghi chú để giữ.'),()=>toast('Hãy chọn và sao chép đoạn mã bên dưới.'))}catch{toast('Hãy chọn và sao chép đoạn mã bên dưới.')}};
+$('bkIn').onclick=()=>{let o;try{o=JSON.parse($('bk').value);if(!o||o.v!==1||!['lessons','hist','alarms','tt'].every(k=>o[k]==null||Array.isArray(o[k])))throw 0}catch{toast('Bản sao lưu không hợp lệ.');return}
+  ask('Khôi phục sẽ ghi đè dữ liệu hiện tại. Tiếp tục?',()=>{['lessons','hist','alarms','tt','sch','model'].forEach(k=>{if(o[k]!=null)store.set(k,o[k])});loadUser();toast('Đã khôi phục.')})};
+window.__back=()=>{
+  for(const id of ['dlg','pk']){if($(id).classList.contains('on')){$(id).classList.remove('on');return true}}
+  if($('auth').classList.contains('on')){if(!$('auCancel').hidden){$('auth').classList.remove('on');return true}return false}
+  if($('ring').classList.contains('on'))return true;
+  if(cur!=='home'){go('home');return true}return false};
+applyLang();
+if(!gstore.get('session',null))showAuth(false);
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>
